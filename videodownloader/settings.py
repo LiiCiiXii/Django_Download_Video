@@ -27,7 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']  # for testing, but better to specify your domain later
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Optional for Heroku/Render
+if os.getenv("RENDER"):
+    DEBUG = False
+    
 STATIC_URL = '/static/'
 
 # Run collectstatic before deploy
@@ -59,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    
 ]
 
 LOGIN_REDIRECT_URL = '/'
