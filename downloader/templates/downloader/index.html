@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Universal Video Downloader</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 500px;
+            max-width: 90%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        input[type="text"], select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .preview {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .preview img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .progress-bar {
+            display: none;
+            margin-top: 15px;
+        }
+        .bar {
+            height: 10px;
+            background: #007BFF;
+            width: 0%;
+            transition: width 0.3s ease-in-out;
+        }
+
+        /* User Auth Links */
+        .auth-links {
+            text-align: right;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #555;
+        }
+        .auth-links a {
+            color: #007BFF;
+            text-decoration: none;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><i class="fa-solid fa-download"></i> Video Downloader</h1>
+
+    <div class="auth-links">
+        {% if user.is_authenticated %}
+            Hi, {{ user.username }}!
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a> |
+            <a href="{% url 'register' %}">Create Account</a>
+        {% endif %}
+    </div>
+
+    <form id="downloadForm" method="post">
+        {% csrf_token %}
+        <input type="text" name="url" placeholder="Enter video URL..." required />
+
+        <label for="format">Choose Format:</label>
+        <select name="format">
+            <option value="mp4">MP4</option>
+            <option value="mp3">MP3 (Audio Only)</option>
+            <option value="webm">WebM</option>
+        </select>
+
+        <label for="quality">Select Quality:</label>
+        <select name="quality">
+            <option value="best">Best Available</option>
+            <option value="1080">1080p</option>
+            <option value="720">720p</option>
+            <option value="480">480p</option>
+            <option value="audio">Audio Only</option>
+        </select>
+
+        <label for="subtitle">Download Subtitles:</label>
+        <select name="subtitle">
+            <option value="no">No</option>
+            <option value="yes">Yes (if available)</option>
+        </select>
+
+        <button type="submit">Download</button>
+
+        <div class="progress-bar" id="progress">
+            <div class="bar" id="bar"></div>
+        </div>
+    </form>
+
+    <div class="preview" id="preview">
+        <h3 id="videoTitle"></h3>
+        <img id="thumbnail" src="" alt="Thumbnail" />
+        <p id="videoDuration"></p>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('downloadForm');
+    const progress = document.getElementById('progress');
+    const bar = document.getElementById('bar');
+    const preview = document.getElementById('preview');
+
+    form.addEventListener('submit', (e) => {
+        progress.style.display = 'block';
+        bar.style.width = '10%';
+        setTimeout(() => bar.style.width = '50%', 500);
+        setTimeout(() => bar.style.width = '90%', 1500);
+    });
+
+    // Simulate preview - replace with AJAX if needed
+    form.addEventListener('change', () => {
+        const url = form.querySelector('input[name="url"]').value;
+        if (url.includes("youtube.com")) {
+            preview.style.display = 'block';
+            document.getElementById('videoTitle').innerText = "Example Title from YouTube";
+            document.getElementById('thumbnail').src = "https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg";
+            document.getElementById('videoDuration').innerText = "Duration: 3:33";
+        } else {
+            preview.style.display = 'none';
+        }
+    });
+</script>
+</body>
+</html>
